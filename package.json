@@ -1,0 +1,11 @@
+{
+  "name": "akey-deploy-web",
+  "version": "1.0.4",
+  "description": "web项目一键打包部署",
+  "main": "upload.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
