@@ -49,4 +49,4 @@ module.exports = Object.freeze({
 + 部署对象服务器使用ssh链接
 + 输入npm run d后会询问你填写git备注,填写则会自动把代码提交到当前git仓库,如不填写则不会提交到git
 
-部分代码来源于网络,我只是做了些许优化,加了些许功能
+[git 地址](https://github.com/lyh0371/akey-deploy-web) 求star
