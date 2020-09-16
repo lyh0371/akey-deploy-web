@@ -1,6 +1,6 @@
 {
   "name": "akey-deploy-web",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "description": "web项目一键打包部署",
   "main": "upload.js",
   "scripts": {
@@ -9,6 +9,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^4.1.0",
+    "compressing": "^1.5.1",
+    "inquirer": "^7.3.3",
+    "node-ssh": "^11.0.0",
+    "ora": "^5.1.0",
+    "shelljs": "^0.8.4"
+  },
+  "devDependencies": {
     "chalk": "^4.1.0",
     "compressing": "^1.5.1",
     "inquirer": "^7.3.3",

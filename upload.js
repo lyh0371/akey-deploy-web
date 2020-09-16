@@ -2,14 +2,14 @@ const chalk = require("chalk"); //命令行颜色
 const ora = require("ora"); // 加载流程动画
 const spinner_style = require("./spinner_style"); //加载动画样式
 const shell = require("shelljs"); // 执行shell命令
-const node_ssh = require("node-ssh"); // ssh连接服务器
+const { NodeSSH } = require("node-ssh"); // ssh连接服务器
 const inquirer = require("inquirer"); //命令行交互
 const zipFile = require("compressing"); // 压缩zip
 const path = require("path"); // nodejs内置路径模块
 const CONFIG = require(__dirname, "./deploy.config.js"); // 配置
 // const fs = require("fs"); // nodejs内置文件模块
 
-const SSH = new node_ssh();
+const SSH = new NodeSSH();
 let config; // 用于保存 inquirer 命令行交互后选择正式|测试版的配置
 
 //logs
@@ -108,6 +108,7 @@ const clearOldFile = async () => {
 //传送zip文件到服务器
 const uploadZipBySSH = async () => {
   //连接ssh
+
   await connectSSH();
   //线上目标文件清空
   await clearOldFile();
@@ -128,7 +129,7 @@ const uploadZipBySSH = async () => {
     //将目标目录的dist里面文件移出到目标文件
     //举个例子 假如我们部署在 /test/html 这个目录下 只有一个网站, 那么上传解压后的文件在 /test/html/dist 里
     //需要将 dist 目录下的文件 移出到 /test/html ;  多网站情况, 如 /test/html/h5  或者 /test/html/admin 都和上面同样道理
-    await runCommand(`mv -f ./dist/*  ../dome`);
+    await runCommand(`mv -f ./dist/*  ${config.PATH}`);
     await runCommand(`rm -rf ./dist`); //移出后删除 dist 文件夹
   } catch (error) {
     errorLog(error);
@@ -143,7 +144,7 @@ const runUploadTask = async () => {
   console.log(chalk.yellow(`--------->  开始自动部署  <---------`));
   //打包
 
-  await compileDist();
+  // await compileDist();
   //压缩
   await zipDist();
   //连接服务器上传文件
@@ -175,16 +176,14 @@ const checkConfig = (conf) => {
 
 /**
  *
- * @param {Object} conf 获取最后一个目录
+ * @param {Object} conf 获取用户的配置
  */
 
-const _path = () => {
-  const path = "";
-  const userPath = CONFIG;
+const getUserSet = (answers) => {
+  const deployConfogPath = path.join(__dirname, "../../deploy.config.js");
+  const deployConfig = require(deployConfogPath);
 
-  console.log("userPath", userPath);
-
-  return path;
+  return deployConfig[answers];
 };
 
 // 执行交互后 启动发布程序
@@ -212,11 +211,8 @@ inquirer
     },
   ])
   .then((answers) => {
-    _path(answers);
-    const deployConfogPath = path.join(__dirname, "../../deploy.config.js");
-    const deployConfig = require(deployConfogPath);
-    config = deployConfig[answers.env];
+    config = getUserSet(answers.env);
     checkConfig(config); // 检查
     compileGit(answers.git); // git 提交
-    // runUploadTask() // 发布
+    runUploadTask(); // 发布
   });
